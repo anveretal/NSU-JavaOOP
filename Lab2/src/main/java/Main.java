@@ -3,16 +3,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class Main {
-
-    public static final String PATH_TO_INPUT = "src/main/resources/";
-
     public static void main(String[] args) {
         if (args.length > 1) {
             System.err.println("Too many arguments");
         }
 
         // Opening config.properties
-        InputStream fis;
+        InputStream fis = null;
         Properties properties;
         try {
             fis = Main.class.getResourceAsStream("config.properties");
@@ -25,6 +22,16 @@ public class Main {
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
+        finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                }
+                catch (IOException e) {
+                    e.printStackTrace(System.err);
+                }
+            }
+        }
 
         // Creating Reader
         BufferedReader reader;
@@ -33,14 +40,28 @@ public class Main {
                 reader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
             }
             else {
-                reader = new BufferedReader(new FileReader(PATH_TO_INPUT + args[0]));
+                InputStream is = Main.class.getResourceAsStream(args[0]);
+                if (is == null) {
+                    throw new FileNotFoundException(args[0]);
+                }
+                reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+                //reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(Main.class.getResourceAsStream(args[0])), StandardCharsets.UTF_8));
+                //reader = new BufferedReader(new FileReader(PATH_TO_INPUT + args[0]));
             }
         }
         catch (FileNotFoundException e) {
             throw new RuntimeException(e.getMessage());
         }
 
+        // Calculating
         Calculator calculator = new Calculator();
         calculator.executeCommands(properties, reader);
+
+        try {
+            reader.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace(System.err);
+        }
     }
 }

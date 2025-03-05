@@ -19,6 +19,13 @@ public class Calculator {
                 if (!commandLine.startsWith("#")) {
                     String[] commandAndArguments = commandLine.split(" ");
 
+                    if (commandAndArguments[0].equals("STOP")) {
+                        break;
+                    }
+
+                    if (!properties.containsKey(commandAndArguments[0])) {
+                        throw new RuntimeException("Unknown command: " + commandAndArguments[0]);
+                    }
                     CommandFactory commandFactory = factoryGenerator.
                             generateCommandFactoryByCommand(commandAndArguments[0], properties);
                     List<String> arguments = new ArrayList<>(Arrays.asList(commandAndArguments).subList(1, commandAndArguments.length));
