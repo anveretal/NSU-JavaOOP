@@ -8,8 +8,13 @@ public class MultiplyCommand implements Command {
         if (!arguments.isEmpty()) {
             throw new IllegalArgumentException("* command requires 0 argument.");
         }
-        double value1 = context.stack.pop();
-        double value2 = context.stack.pop();
-        context.stack.push(value2 * value1);
+        try {
+            double value1 = context.stack.pop();
+            double value2 = context.stack.pop();
+            context.stack.push(value2 * value1);
+        }
+        catch (Exception e) {
+            throw new RuntimeException("Too few arguments on the stack: " + e.getLocalizedMessage());
+        }
     }
 }

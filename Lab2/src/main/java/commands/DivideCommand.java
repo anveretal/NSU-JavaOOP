@@ -8,11 +8,16 @@ public class DivideCommand implements Command {
         if (!arguments.isEmpty()) {
             throw new IllegalArgumentException("/ command requires 0 argument.");
         }
-        double value1 = context.stack.pop();
-        double value2 = context.stack.pop();
-        if (value1 == 0) {
-            throw new IllegalArgumentException("divide by zero.");
+        try {
+            double value1 = context.stack.pop();
+            double value2 = context.stack.pop();
+            if (value1 == 0) {
+                throw new IllegalArgumentException("divide by zero.");
+            }
+            context.stack.push(value2 / value1);
         }
-        context.stack.push(value2 / value1);
+        catch (Exception e) {
+            throw new RuntimeException(e.getLocalizedMessage());
+        }
     }
 }
